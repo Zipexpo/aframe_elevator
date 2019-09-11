@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello, World! - A-Frame</title>
+    <meta name="description" content="Hello, World! - A-Frame">
+    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-aabb-collider-component@3.1.0/dist/aframe-aabb-collider-component.min.js"></script>
+    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v2.1.0/dist/aframe-physics-system.min.js"></script>
+    <script src="https://unpkg.com/super-hands@2.0.2/dist/super-hands.min.js"></script>
+    <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
+    <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
+    <script src="scripts/lib/jquery-3.3.1.min.js"></script>
+    <style>
+      iframe {
+        width: 1024px;
+        height: 2048px;
+      }
+    </style>
+  </head>
+  <body>
+  <script>
+      AFRAME.registerComponent('collider-check', {
+          dependencies: ['raycaster'],
+
+          init: function () {
+              this.el.addEventListener('raycaster-intersection', function () {
+                  console.log('Player hit something!');
+              });
+          }
+      });
+
+      AFRAME.registerComponent('raycaster-listen', {
+          init: function () {
+              // Use events to figure out what raycaster is listening so we don't have to
+              // hardcode the raycaster.
+              this.el.addEventListener('raycaster-intersected', evt => {
+                  this.raycaster = evt.detail.el;
+              });
+              this.el.addEventListener('raycaster-intersected-cleared', evt => {
+                  this.raycaster = null;
+              });
+          },
+
+          tick: function () {
+              if (!this.raycaster) { return; }  // Not intersecting.
+
+              let intersection = this.raycaster.components.raycaster.getIntersection(this.el);
+              if (!intersection) { return; }
+              console.log(intersection.point);
+          }
+      });
+      AFRAME.registerComponent('restrict-position', {
+          schema: {
+          },
+
+          init: function () {
+              this.active = !AFRAME.utils.device.checkHeadsetConnected();
+              this.radius = 1.8;
+          },
+
+          tick: function (time, delta) {
+              if (!this.active) { return; }
+              var fromCircleToObject = new THREE.Vector3();
+              var y = this.el.object3D.position.y;
+              fromCircleToObject.copy(this.el.object3D.position);
+              var len = this.radius / fromCircleToObject.length();
+              if (len < 0.98) {
+                  fromCircleToObject.multiplyScalar(this.radius / fromCircleToObject.length());
+                  this.el.setAttribute('position', {
+                      x: fromCircleToObject.x,
+                      y: y,
+                      z: fromCircleToObject.z
+                  });
+              }
+          }
+      });
+  </script>
+  <!--<iframe id="promoweb" style=" position: fixed; left: 0; top: 0; z-index: -1; overflow: hidden" src="https://idatavisualizationlab.github.io"></iframe>-->
+    <a-scene data-html2canvas-ignore="true">
+      <a-assets>
+        <a-mixin id="controller"
+                 physics-collider
+                 static-body="shape: sphere; sphereRadius: 0.02"
+                 super-hands="colliderEvent: collisions;
+                            colliderEventProperty: els;
+                            colliderEndEvent: collisions;
+                            colliderEndEventProperty: clearedEls"
+                 collision-filter = "group: hands;
+                                   collidesWith: red, blue;
+                                   collisionForces: false">
+        </a-mixin>
+        <a-mixin id="cube" dynamic-body grabbable
+                 geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5">
+        </a-mixin>
+      </a-assets>
+
+      <a-entity obj-model="obj: url(3D/elevator.obj); mtl: url(3D/elevator.mtl)" scale="1 1 1" rotation="0 180 0"></a-entity>
+      <a-entity id="door" geometry="depth:  0.1;  height:  2.8;  width:  3.05" position="0 1.518 -1.163"
+                material="alphaTest:  0.34; color:  #b2b2b2; metalness:  0.46;"
+      ></a-entity>
+      <a-plane geometry="height: 2.5; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
+                material="shader: gif; src:url(assets/images/figures/idvRact2.gif);"
+      ></a-plane>
+      <a-plane position="0 0 -4"  rotation="-90 0" width="5" height="8" color="#7BC8A4" class="collidable" geometry="" material=""></a-plane>
+
+      <a-sky src="assets/sky/sky.jpg"></a-sky>
+      <!--<a-entity class="collidable" geometry="primitive: box" position="1 0 0"></a-entity>-->
+      <!-- floor entity. 'default' collision group so cubes will bounce off -->
+      <a-entity id="player"
+                camera position="0 1.6 0"
+                wasd-controls
+                look-controls
+                restrict-position
+                shoot="direction: 0 0 -1; spaceKeyEnabled: true">
+        <!--<a-entity id="hurt"-->
+                  <!--proxy_event="event: player-hit; dst:#hurt"-->
+                  <!--geometry="primitive:sphere;radius:0.5;segmentsHeight:6;segmentsWidth:7"-->
+                  <!--position="0 0 -0.2"-->
+                  <!--rotation="0 90 0"-->
+                  <!--material="shader: flat; side: back; transparent: true; opacity: 0; depthTest: false; src: #hurtImg">-->
+          <!--<a-animation id="player-hit-anim" attribute="material.opacity" to="1" from="0" begin="player-hit" direction="alternate" dur="200" repeat="1"></a-animation>-->
+        </a-entity>
+      </a-entity>
+      </a-entity>
+      <a-entity id="leftHand" shoot-controls="" weapon="" shoot="" vive-controls="model:false" oculus-touch-controls="model:false" windows-motion-controls="hand:left;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
+      <a-entity id="rightHandPivot">
+        <a-entity id="rightHand" shoot-controls="hand:right" weapon="" shoot="" vive-controls="hand:right;model:false" oculus-touch-controls="hand:right;model:false" windows-motion-controls="model:false" daydream-controls="hand:right;model:false" gearvr-controls="hand:right;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
+      </a-entity>
+      <a-entity light="type: ambient; color: #BBB"></a-entity>
+      <a-entity light="type: spot; angle: 85.55; intensity: 0.57; distance: 5.65" rotation="-90 0" position="0 3.141 0"></a-entity>
+      <a-entity light="defaultLightsEnabled: false; intensity: 0.6; castShadow: true" position="-0.64557 3.30498 -5.22941" data-aframe-default-light="" aframe-injected=""></a-entity>
+    </a-scene>
+
+  </body>
+</html>

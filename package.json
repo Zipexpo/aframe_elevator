@@ -1,0 +1,28 @@
+{
+  "name": "aframe-elevator",
+  "description": "aframe-elevator.",
+  "version": "0.3.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "budo --live --verbose --port 3000 --open",
+    "deploy": "ghpages",
+    "ghpages": "ghpages"
+  },
+  "devDependencies": {
+    "budo": "^7.0.0",
+    "ghpages": "0.0.3"
+  },
+  "keywords": [
+    "aframe",
+    "aframe-example",
+    "aframe-watcher",
+    "aframe-boilerplate",
+    "aframe-room-component",
+    "aframe-scene",
+    "webvr",
+    "vr"
+  ],
+  "dependencies": {
+    "aframe-room-component": "^0.3.0"
+  }
+}
