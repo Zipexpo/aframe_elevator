@@ -4,9 +4,9 @@
   "version": "0.3.0",
   "license": "MIT",
   "scripts": {
-    "start": "budo --live --verbose --port 3000 --open",
-    "deploy": "ghpages",
-    "ghpages": "ghpages"
+    "build": "cross-env NODE_ENV=production webpack",
+    "start": "webpack-dev-server --host 127.0.0.1 --progress --colors --hot -d --inline",
+    "lint": "semistandard -v | snazzy"
   },
   "devDependencies": {
     "budo": "^7.0.0",
@@ -23,6 +23,11 @@
     "vr"
   ],
   "dependencies": {
+    "cross-env": "^3.0.0",
+    "semistandard": "^9.0.0",
+    "snazzy": "^4.0.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1",
     "aframe-room-component": "^0.3.0"
   }
 }

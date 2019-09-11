@@ -11,6 +11,8 @@
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
     <script src="scripts/lib/jquery-3.3.1.min.js"></script>
+
+    <script src="build/build.js"></script>
     <style>
       iframe {
         width: 1024px;
@@ -50,34 +52,9 @@
               console.log(intersection.point);
           }
       });
-      AFRAME.registerComponent('restrict-position', {
-          schema: {
-          },
-
-          init: function () {
-              this.active = !AFRAME.utils.device.checkHeadsetConnected();
-              this.radius = 1.8;
-          },
-
-          tick: function (time, delta) {
-              if (!this.active) { return; }
-              var fromCircleToObject = new THREE.Vector3();
-              var y = this.el.object3D.position.y;
-              fromCircleToObject.copy(this.el.object3D.position);
-              var len = this.radius / fromCircleToObject.length();
-              if (len < 0.98) {
-                  fromCircleToObject.multiplyScalar(this.radius / fromCircleToObject.length());
-                  this.el.setAttribute('position', {
-                      x: fromCircleToObject.x,
-                      y: y,
-                      z: fromCircleToObject.z
-                  });
-              }
-          }
-      });
   </script>
   <!--<iframe id="promoweb" style=" position: fixed; left: 0; top: 0; z-index: -1; overflow: hidden" src="https://idatavisualizationlab.github.io"></iframe>-->
-    <a-scene data-html2canvas-ignore="true">
+    <a-scene data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals="">
       <a-assets>
         <a-mixin id="controller"
                  physics-collider
@@ -99,6 +76,9 @@
       <a-entity id="door" geometry="depth:  0.1;  height:  2.8;  width:  3.05" position="0 1.518 -1.163"
                 material="alphaTest:  0.34; color:  #b2b2b2; metalness:  0.46;"
       ></a-entity>
+      <a-entity geometry="primitive: plane; height: 0.25; width: 0.5" scale="" position="1.16689 2.50127 -0.98804" material="color: #111111; metalness: 0.74">
+        <a-entity id="currentFloor" current-floor="value: 1" text="font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; align: center; value: 0" gamestate-bind="level: current-floor.value"></a-entity>
+      </a-entity>
       <a-plane geometry="height: 2.5; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
                 material="shader: gif; src:url(assets/images/figures/idvRact2.gif);"
       ></a-plane>
