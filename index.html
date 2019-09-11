@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/super-hands@2.0.2/dist/super-hands.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
     <script src="scripts/lib/jquery-3.3.1.min.js"></script>
 
     <script src="build/build.js"></script>
@@ -75,9 +76,12 @@
       <a-entity obj-model="obj: url(3D/elevator.obj); mtl: url(3D/elevator.mtl)" scale="1 1 1" rotation="0 180 0"></a-entity>
       <a-entity id="door" geometry="depth:  0.1;  height:  2.8;  width:  3.05" position="0 1.518 -1.163"
                 material="alphaTest:  0.34; color:  #b2b2b2; metalness:  0.46;"
-      ></a-entity>
+      >
+        <a-animation id="door0close" attribute="position" to="0 1.518 -1.163" begin="opening-door" dur="2000" easing="linear"></a-animation>
+        <a-animation id="door0open" attribute="position" to="2.288 1.518 -1.163" begin="closing-door" dur="2000" easing="linear"></a-animation>
+      </a-entity>
       <a-entity geometry="primitive: plane; height: 0.25; width: 0.5" scale="" position="1.16689 2.50127 -0.98804" material="color: #111111; metalness: 0.74">
-        <a-entity id="currentFloor" current-floor="value: 1" text="font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; align: center; value: 0" gamestate-bind="level: current-floor.value"></a-entity>
+        <a-entity id="currentFloor" current-floor="value: 0" text="width: 3;font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; align: center; value: 0" gamestate-bind="level: current-floor.value"></a-entity>
       </a-entity>
       <a-plane geometry="height: 2.5; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
                 material="shader: gif; src:url(assets/images/figures/idvRact2.gif);"

@@ -22,6 +22,12 @@ TIMER ={
     keepopen: 2,
     skipclose: -1,
 }
+FLOOR = {
+    '-1':{text:'B',description:'Basement',extr:'basement: hardware storage'},
+    0:{text:'G',description:'Ground/1st Floor',extr:'Parking lot right here'},
+    1:{text:2,description:'Office',extr:'Department office'},
+    2:{text:3,description:'Laboratory',extr:'Laboratory and Faculty office'},
+}
 AFRAME.registerComponent('gamestate', {
     schema: {
         level: {default: 0},
@@ -72,8 +78,9 @@ AFRAME.registerComponent('gamestate', {
         });
 
         registerHandler('open_door_btn', function (newState) {
-            if (newState.isOpen)
-                newState.timecounter += TIMER.keepopen*1000;
+            if (newState.isOpen) {
+                newState.timecounter += TIMER.keepopen * 1000;
+            }
             return newState;
         });
 
@@ -83,16 +90,16 @@ AFRAME.registerComponent('gamestate', {
             return newState;
         });
 
-        registerHandler('set_floor', function (newState) {
-            ELEVATOR.currentstate.level = newState.level;
-            if (!newState.levelArr.find(newState.level)) {
-                newState.levelArr.shift();
-                newState.state = 'STATE_REACH';
-                self.stateReach(newState,newState.level,true);
-            }else{
-                newState.state = 'STATE_MOVING';
-                self.stateReach(newState,newState.level,false);
-            }
+        registerHandler('opening_door', function (newState) {
+            newState.isOpen = true;
+            newState.timecounter = TIMER.openWait*1000;
+            return newState;
+        });
+
+        registerHandler('closing_door', function (newState) {
+            if (newState.state==='DOOR_OPENING')
+                newState.timecounter = TIMER.openWait*1000;
+            newState.state = 'DOOR_CLOSING';
             return newState;
         });
 
