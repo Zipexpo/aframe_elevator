@@ -10,12 +10,13 @@ AFRAME.registerComponent('current-floor', {
     init: function () {
 
         this.el.sceneEl.addEventListener('set_floor', function () {
+            console.log('Here')
 
         });
     },
 
     update: function () {
+        if(this.data.value%1===0)
         this.el.setAttribute("text", {value: FLOOR[this.data.value].text});
-        console.log(this);
     }
 });

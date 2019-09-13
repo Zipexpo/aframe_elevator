@@ -11,6 +11,7 @@
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@4.2.1/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-proxy-event-component/dist/aframe-proxy-event-component.min.js"></script>
     <script src="scripts/lib/jquery-3.3.1.min.js"></script>
 
     <script src="build/build.js"></script>
@@ -53,9 +54,57 @@
               console.log(intersection.point);
           }
       });
+      AFRAME.registerComponent('door-model', {
+          schema: {
+              value: {default: 0},
+          },
+          init: function () {
+              this.justchange=false;
+              this.el.addEventListener('animationcomplete', evt => {
+                  // evt.detail.name
+                  this.data.value = !this.data.value;
+                  this.justchange = true;
+            });
+          },
+          tick: function() {
+              if (this.justchange&&!this.data.value) {
+                  this.el.sceneEl.emit('closing_door');
+              }else if(this.justchange&&this.data.value&&ELEVATOR.actionNext){
+                  this.el.sceneEl.emit(ELEVATOR.actionNext);
+                  ELEVATOR.actionNext=undefined;
+              }
+              this.justchange = false;
+          }
+
+      });
+
+      AFRAME.registerComponent('elevator-model', {
+          schema: {
+              value: {default: 0},
+          },
+          init: function () {
+              this.justchange=false;
+              this.el.addEventListener('animationcomplete', evt => {
+                  console.log('here')
+                  this.data.value = !this.data.value;
+              this.justchange = true;
+          });
+          },
+          tick: function() {
+              if (this.justchange) {
+                  this.el.emit('set_floor')
+              }
+              this.justchange = false;
+          }
+
+      });
   </script>
   <!--<iframe id="promoweb" style=" position: fixed; left: 0; top: 0; z-index: -1; overflow: hidden" src="https://idatavisualizationlab.github.io"></iframe>-->
-    <a-scene data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals="">
+    <a-scene data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals=""
+             proxy-event__open="event: closing_door;to: #door; as:close"
+             proxy-event__close="event: opening_door;to: #door; as:open"
+             proxy-event__moving="event: moving;to: #elevator_o"
+    >
       <a-assets>
         <a-mixin id="controller"
                  physics-collider
@@ -71,17 +120,48 @@
         <a-mixin id="cube" dynamic-body grabbable
                  geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5">
         </a-mixin>
+        <audio id="voice-1Wav" src="assets/sound/voice-1.wav"  crossorigin="anonymous"></audio>
+        <audio id="voice0Wav" src="assets/sound/voice0.wav"  crossorigin="anonymous"></audio>
+        <audio id="voice1Wav" src="assets/sound/voice1.wav"  crossorigin="anonymous"></audio>
+        <audio id="voice2Wav" src="assets/sound/voice2.wav"  crossorigin="anonymous"></audio>
+
       </a-assets>
 
-      <a-entity obj-model="obj: url(3D/elevator.obj); mtl: url(3D/elevator.mtl)" scale="1 1 1" rotation="0 180 0"></a-entity>
-      <a-entity id="door" geometry="depth:  0.1;  height:  2.8;  width:  3.05" position="0 1.518 -1.163"
-                material="alphaTest:  0.34; color:  #b2b2b2; metalness:  0.46;"
+      <a-entity id="voice-1" sound="src: #voice-1Wav; positional: false"></a-entity>
+      <a-entity id="voice0" sound="src: #voice0Wav; positional: false"></a-entity>
+      <a-entity id="voice1" sound="src: #voice1Wav; positional: false"></a-entity>
+      <a-entity id="voice2" sound="src: #voice2Wav; positional: false"></a-entity>
+
+      <a-entity elevator-model="" id="elevator_o" obj-model="obj: url(3D/elevator.obj); mtl: url(3D/elevator.mtl)" scale="1 1 1" rotation="0 180 0"
+                animation__moving ="property: position;dur:4000;startEvents: moving;easing: linear;to: 0 0.001 0"
       >
-        <a-animation id="door0close" attribute="position" to="0 1.518 -1.163" begin="opening-door" dur="2000" easing="linear"></a-animation>
-        <a-animation id="door0open" attribute="position" to="2.288 1.518 -1.163" begin="closing-door" dur="2000" easing="linear"></a-animation>
+        <a-entity id="door" door-model="value: 1" geometry="depth:  0.1;  height:  2.8;  width:  3.05" position="0 1.518 1.179"
+                  material="alphaTest:  0.34; color:  #b2b2b2; metalness:  0.46;"
+                  animation__open ="property: position;dur:2000;startEvents: open;easing: linear;to: -2.284 1.518 1.179"
+                  animation__close ="property: position;dur:2000;startEvents: close;easing: linear;to: 0 1.518 1.179"
+        >
+
+      </a-entity>
+        <!--<a-animation id="door0open" attribute="position" from="2.288 1.518 -1.163" to="0 1.518 -1.163" begin="opening-door" dur="2000" easing="linear" repeat="1"></a-animation>-->
+        <!--<a-animation id="door0close" attribute="position" from="0 1.518 -1.163" to="2.288 1.518 -1.163" begin="closing-door" dur="2000" easing="linear" repeat="1"></a-animation>-->
       </a-entity>
       <a-entity geometry="primitive: plane; height: 0.25; width: 0.5" scale="" position="1.16689 2.50127 -0.98804" material="color: #111111; metalness: 0.74">
         <a-entity id="currentFloor" current-floor="value: 0" text="width: 3;font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; align: center; value: 0" gamestate-bind="level: current-floor.value"></a-entity>
+      </a-entity>
+      <a-entity geometry="primitive: plane; height: 0.75; width: 0.5" scale="" position="1.16689 1.559 -0.98804" material="color: #111111; metalness: 0.74">
+        <a-entity id="floor_2" button_floor="value: 2" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/3rdfloor.png" position="-0.12935 0.14 0.00149"
+                  event-set__click="clicked:true">
+
+        </a-entity>
+        <a-entity id="floor_1" button_floor="value: 1"  geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/2ndfloor.png" position="-0.12935 0.045 0.00149">
+
+        </a-entity>
+        <a-entity id="floor_0" button_floor="value: 0" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/Ground.png" position="-0.12935 -0.05 0.00149">
+
+        </a-entity>
+        <a-entity id="floor_-1" button_floor="value: -1" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/Basement.png" position="-0.12935 -0.145 0.00149">
+
+        </a-entity>
       </a-entity>
       <a-plane geometry="height: 2.5; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
                 material="shader: gif; src:url(assets/images/figures/idvRact2.gif);"
@@ -97,6 +177,11 @@
                 look-controls
                 restrict-position
                 shoot="direction: 0 0 -1; spaceKeyEnabled: true">
+        <a-cursor ></a-cursor>
+        <a-entity id="leftHand" shoot-controls="" weapon="" shoot="" vive-controls="model:false" oculus-touch-controls="model:false" windows-motion-controls="hand:left;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
+        <a-entity id="rightHandPivot">
+          <a-entity id="rightHand" shoot-controls="hand:right" weapon="" shoot="" vive-controls="hand:right;model:false" oculus-touch-controls="hand:right;model:false" windows-motion-controls="model:false" daydream-controls="hand:right;model:false" gearvr-controls="hand:right;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
+        </a-entity>
         <!--<a-entity id="hurt"-->
                   <!--proxy_event="event: player-hit; dst:#hurt"-->
                   <!--geometry="primitive:sphere;radius:0.5;segmentsHeight:6;segmentsWidth:7"-->
@@ -107,10 +192,7 @@
         </a-entity>
       </a-entity>
       </a-entity>
-      <a-entity id="leftHand" shoot-controls="" weapon="" shoot="" vive-controls="model:false" oculus-touch-controls="model:false" windows-motion-controls="hand:left;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
-      <a-entity id="rightHandPivot">
-        <a-entity id="rightHand" shoot-controls="hand:right" weapon="" shoot="" vive-controls="hand:right;model:false" oculus-touch-controls="hand:right;model:false" windows-motion-controls="model:false" daydream-controls="hand:right;model:false" gearvr-controls="hand:right;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
-      </a-entity>
+
       <a-entity light="type: ambient; color: #BBB"></a-entity>
       <a-entity light="type: spot; angle: 85.55; intensity: 0.57; distance: 5.65" rotation="-90 0" position="0 3.141 0"></a-entity>
       <a-entity light="defaultLightsEnabled: false; intensity: 0.6; castShadow: true" position="-0.64557 3.30498 -5.22941" data-aframe-default-light="" aframe-injected=""></a-entity>
