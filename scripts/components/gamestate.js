@@ -27,7 +27,7 @@ TIMER ={
 }
 FLOOR = {
     '-1':{text:'B',description:'Basement',extr:'basement: hardware storage'},
-    0:{text:'G',description:'Ground/1st Floor',extr:'Parking lot right here'},
+    0:{text:'1',description:'Ground/1st Floor',extr:'Parking lot right here'},
     1:{text:2,description:'Office',extr:'Department office'},
     2:{text:3,description:'Laboratory',extr:'Laboratory and Faculty office'},
 }
@@ -43,11 +43,13 @@ AFRAME.registerComponent('gamestate', {
     },
 
     stateReach: function (newState, level,reach) {
-        newState.state = reach?'DOOR_OPENING':newState.state;
-        newState.isReachFloor = reach;
-        newState.timecounter = 0;
-        console.log(document.getElementById('voice'+level))
-        document.getElementById('voice'+level).components.sound.playSound();
+        console.log(level)
+        if (level!==null&&level!==undefined) {
+            newState.state = reach ? 'DOOR_OPENING' : newState.state;
+            newState.isReachFloor = reach;
+            newState.timecounter = 0;
+            document.getElementById('voice' + level).components.sound.playSound();
+        }
         // document.getElementById('mainThemeMusic').components.sound.pauseSound();
     },
     init: function () {
@@ -62,10 +64,24 @@ AFRAME.registerComponent('gamestate', {
         el.emit('gamestate-initialized', {state: initialState});
 
         registerHandler('chosing-floor', function (newState) {
+            document.getElementById('clicksound').components.sound.playSound();
             if (ELEVATOR.currentstate.levelArr.indexOf(ELEVATOR.currentstate.chooseFloor)===-1||newState.level===ELEVATOR.currentstate.chooseFloor) {
-                ELEVATOR.currentstate.levelArr.push(ELEVATOR.currentstate.chooseFloor);
-                ELEVATOR.currentstate.levelArr = ELEVATOR.currentstate.levelArr.sort(function(a,b){return ELEVATOR.currentstate.direction*(a-b)})
-                    .filter(function(d){return  ELEVATOR.currentstate.direction*(d - ELEVATOR.currentstate.level)});
+                if(ELEVATOR.currentstate.levelArr.indexOf(ELEVATOR.currentstate.chooseFloor)===-1)
+                    ELEVATOR.currentstate.levelArr.push(ELEVATOR.currentstate.chooseFloor);
+                if (ELEVATOR.currentstate.levelArr.length==1){
+                    ELEVATOR.currentstate.direction = (ELEVATOR.currentstate.chooseFloor-ELEVATOR.currentstate.level)>0?1:-1;
+                }else {
+                    ELEVATOR.currentstate.levelArr = ELEVATOR.currentstate.levelArr.filter(function (d) {
+                        if(ELEVATOR.currentstate.direction * (d - ELEVATOR.currentstate.level) > 0)
+                        {
+                            return true;
+                        }else {
+                            document.querySelector('#floor_'+ELEVATOR.currentstate.chooseFloor+' .hightlight').setAttribute('visible',false);
+                            return false;
+                        }
+                    });
+                }
+                ELEVATOR.currentstate.levelArr = ELEVATOR.currentstate.levelArr.sort(function(a,b){return ELEVATOR.currentstate.direction*(a-b)});
                 if ((newState.state==="DOOR_CLOSING"|| newState.state==="STATE_REACH")&& newState.level===ELEVATOR.currentstate.chooseFloor) {
                     newState.state = 'DOOR_OPENING';
                 }else if (ELEVATOR.currentstate.levelArr.length==1){
@@ -80,7 +96,8 @@ AFRAME.registerComponent('gamestate', {
             newState.level=newState.level+ELEVATOR.currentstate.direction/2;
             ELEVATOR.currentstate.level = newState.level;
             if (ELEVATOR.currentstate.levelArr.indexOf(newState.level)!==-1 || ELEVATOR.currentstate.levelArr.length===0&& ELEVATOR.currentstate.level===0) {
-                ELEVATOR.currentstate.levelArr.shift();
+                ELEVATOR.currentstate.levelArr.shift()
+                document.querySelector('#floor_'+ ELEVATOR.currentstate.level+' .hightlight').setAttribute('visible',false);
                 newState.state = 'DOOR_OPENING';
                 self.stateReach(newState,newState.level,true);
             }else{
@@ -168,25 +185,6 @@ AFRAME.registerComponent('gamestate-bind', {
     },
 
     updateBinders: function () {
-        function stateEvent (newState){
-            console.log(newState.state)
-            switch (newState.state) {
-                case 'DOOR_OPENING':
-                    el.sceneEl.emit('opening_door');
-                    break;
-                case 'DOOR_CLOSING':
-                    el.sceneEl.emit('closing_door');
-                    if (ELEVATOR.currentstate.levelArr.length)
-                        ELEVATOR.actionNext = 'moving';
-                    break;
-                case 'STATE_MOVING':
-                    el.sceneEl.emit('moving');
-                    break;
-                default:
-                    break;
-            }
-
-        }
         var data = this.data;
         var el = this.el;
         var subscribed = Object.keys(this.data);
@@ -194,7 +192,7 @@ AFRAME.registerComponent('gamestate-bind', {
         el.sceneEl.addEventListener('gamestate-changed', function (evt) {
             syncState(evt.detail.diff);
             if (evt.detail.diff.state!==undefined||evt.detail.diff.level!==undefined&&evt.detail.diff.level%1===0)
-                stateEvent (evt.detail.state);
+                stateEvent (evt.detail.state,el);
         });
 
         el.sceneEl.addEventListener('gamestate-initialized', function (evt) {

@@ -12,6 +12,7 @@ AFRAME.registerComponent('button_floor', {
         var self = this;
         this.el.addEventListener('click', function (evt) {
             ELEVATOR.currentstate.chooseFloor = self.data.value;
+            document.querySelector('#floor_'+self.data.value+' .hightlight').setAttribute('visible',true);
             self.el.emit('chosing-floor');
         });
 

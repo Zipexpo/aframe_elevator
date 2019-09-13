@@ -24,6 +24,37 @@
   </head>
   <body>
   <script>
+      function stateEvent (newState,el){
+          switch (newState.state) {
+              case 'DOOR_OPENING':
+                  directiondecorate.emit('hidedirection');
+                  // document.getElementById('voicedooropening').components.sound.playSound();
+                  document.getElementById('dooropening').components.sound.playSound();
+                  el.sceneEl.emit('opening_door');
+                  break;
+              case 'DOOR_CLOSING':
+                  document.getElementById('voicedoorclosing').components.sound.playSound();
+                  document.getElementById('doorclosing').components.sound.playSound();
+                  el.sceneEl.emit('closing_door');
+                  if (ELEVATOR.currentstate.levelArr.length)
+                      ELEVATOR.actionNext = 'STATE_MOVING';
+                  break;
+              case 'STATE_MOVING':
+                  document.getElementById('elevatormove').components.sound.playSound();
+                  el.sceneEl.emit('moving');
+                  directiondecorate.emit('showdirection');
+                  if (ELEVATOR.currentstate.direction>0)
+                      directiondecorate.emit('goup');
+                  else {
+                      directiondecorate.emit('godown');
+                  }
+                  break;
+              default:
+                  break;
+          }
+          console.log(document.getElementById('voicedooropening').components.sound.isPlaying);
+
+      }
       AFRAME.registerComponent('collider-check', {
           dependencies: ['raycaster'],
 
@@ -70,7 +101,8 @@
               if (this.justchange&&!this.data.value) {
                   this.el.sceneEl.emit('closing_door');
               }else if(this.justchange&&this.data.value&&ELEVATOR.actionNext){
-                  this.el.sceneEl.emit(ELEVATOR.actionNext);
+                  console.log('moving frie + '+ELEVATOR.actionNext)
+                  stateEvent ({state:ELEVATOR.actionNext},this.el);
                   ELEVATOR.actionNext=undefined;
               }
               this.justchange = false;
@@ -98,6 +130,8 @@
           }
 
       });
+
+
   </script>
   <!--<iframe id="promoweb" style=" position: fixed; left: 0; top: 0; z-index: -1; overflow: hidden" src="https://idatavisualizationlab.github.io"></iframe>-->
     <a-scene data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals=""
@@ -124,6 +158,14 @@
         <audio id="voice0Wav" src="assets/sound/voice0.wav"  crossorigin="anonymous"></audio>
         <audio id="voice1Wav" src="assets/sound/voice1.wav"  crossorigin="anonymous"></audio>
         <audio id="voice2Wav" src="assets/sound/voice2.wav"  crossorigin="anonymous"></audio>
+        <audio id="voicedoorclosingWav" src="assets/sound/doorclosing.wav"  crossorigin="anonymous"></audio>
+        <audio id="voicedooropeningWav" src="assets/sound/dooropening.wav"  crossorigin="anonymous"></audio>
+        <audio id="dooropeningWav" src="assets/sound/doorsound_open.wav"  crossorigin="anonymous"></audio>
+        <audio id="doorclosingWav" src="assets/sound/doorsound_close.wav"  crossorigin="anonymous"></audio>
+        <audio id="elevatormovWav" src="assets/sound/elevatormove.wav"  crossorigin="anonymous"></audio>
+        <audio id="emergencyWav" src="assets/sound/emergency.wav"  crossorigin="anonymous"></audio>
+        <audio id="idleWav" src="assets/sound/idle.wav"  crossorigin="anonymous"></audio>
+        <audio id="clickWav" src="assets/sound/feedback.wav"  crossorigin="anonymous"></audio>
 
       </a-assets>
 
@@ -131,36 +173,67 @@
       <a-entity id="voice0" sound="src: #voice0Wav; positional: false"></a-entity>
       <a-entity id="voice1" sound="src: #voice1Wav; positional: false"></a-entity>
       <a-entity id="voice2" sound="src: #voice2Wav; positional: false"></a-entity>
+      <a-entity id="voicedoorclosing" sound="src: #voicedoorclosingWav; positional: false"></a-entity>
+      <a-entity id="voicedooropening" sound="src: #voicedooropeningWav; positional: false"></a-entity>
+      <a-entity id="elevatormove" sound="src: #elevatormovWav; positional: false;volume:0.5;poolSize:2;"></a-entity>
+      <a-entity id="emergency" sound="src: #emergencyWav; loop:true; positional: false"></a-entity>
+      <a-entity id="idle" sound="src: #idleWav; positional: false"></a-entity>
 
       <a-entity elevator-model="" id="elevator_o" obj-model="obj: url(3D/elevator.obj); mtl: url(3D/elevator.mtl)" scale="1 1 1" rotation="0 180 0"
-                animation__moving ="property: position;dur:4000;startEvents: moving;easing: linear;to: 0 0.001 0"
+                animation__moving ="property: position;delay:500;dur:4000;startEvents: moving;easing: linear;to: 0 0.001 0"
       >
         <a-entity id="door" door-model="value: 1" geometry="depth:  0.1;  height:  2.8;  width:  3.05" position="0 1.518 1.179"
                   material="alphaTest:  0.34; color:  #b2b2b2; metalness:  0.46;"
                   animation__open ="property: position;dur:2000;startEvents: open;easing: linear;to: -2.284 1.518 1.179"
                   animation__close ="property: position;dur:2000;startEvents: close;easing: linear;to: 0 1.518 1.179"
         >
+          <a-entity id="doorclosing" sound="src: #doorclosingWav"></a-entity>
+          <a-entity id="dooropening" sound="src: #dooropeningWav"></a-entity>
+        </a-entity>
+
+        <a-entity geometry="primitive: plane; height: 0.25; width: 0.5" scale="" position="-1.16689 2.50127 0.993" material="color: #111111; metalness: 0.74" rotation="0 180 0">
+          <a-entity id="directiondecorate" position="-0.129 0 0.00143" visible="false" material=""
+                    animation__goup ="property: position;dur:1000;startEvents: goup;pauseEvents: hidedirection;loop:true;easing: linear;to: -0.129 0.051 0.00143"
+                    animation__godown ="property: position;dur:1000;startEvents: godown;loop:true;pauseEvents: hidedirection;easing: linear;to: -0.129 0 0.00143"
+                    proxy-event__hidedirection="event: set_floor;to: #directiondecorate;as: hidedirection"
+                    proxy-event__showdirection="event: moving;to: #directiondecorate;as: showdirection"
+                    proxy-event__goup1="event: goup;to: #directiondecorateUp"
+                    proxy-event__goup2="event: goup;to: #directiondecorateDown"
+                    proxy-event__godown1="event: godown;to: #directiondecorateUp"
+                    proxy-event__godown2="event: godown;to: #directiondecorateDown"
+                    event-set__hidedirection="_event: hidedirection; visible: false"
+                    event-set__showdirection="_event: showdirection; visible: true"
+          >
+            <a-entity id="directiondecorateUp" geometry="primitive: triangle" scale="0.051 0.051 0.051" material=""
+                      event-set__goup="_event: goup; visible: true"
+                      event-set__godown="_event: gowdown; visible: false"
+            >
+            </a-entity>
+            <a-entity id="directiondecorateDown" geometry="primitive: triangle" scale="0.051 0.051 0.051" rotation="0 0 180" material=""
+                      event-set__goup="_event: goup; visible: false"
+                      event-set__godown="_event: gowdown; visible: true"
+            >
+            </a-entity>
+          </a-entity>
+          <a-entity id="currentFloor" current-floor="value: 0" text="width: 3;font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; align: center; value: 0" gamestate-bind="level: current-floor.value"></a-entity>
+        </a-entity>
 
       </a-entity>
-        <!--<a-animation id="door0open" attribute="position" from="2.288 1.518 -1.163" to="0 1.518 -1.163" begin="opening-door" dur="2000" easing="linear" repeat="1"></a-animation>-->
-        <!--<a-animation id="door0close" attribute="position" from="0 1.518 -1.163" to="2.288 1.518 -1.163" begin="closing-door" dur="2000" easing="linear" repeat="1"></a-animation>-->
-      </a-entity>
-      <a-entity geometry="primitive: plane; height: 0.25; width: 0.5" scale="" position="1.16689 2.50127 -0.98804" material="color: #111111; metalness: 0.74">
-        <a-entity id="currentFloor" current-floor="value: 0" text="width: 3;font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; align: center; value: 0" gamestate-bind="level: current-floor.value"></a-entity>
-      </a-entity>
+
       <a-entity geometry="primitive: plane; height: 0.75; width: 0.5" scale="" position="1.16689 1.559 -0.98804" material="color: #111111; metalness: 0.74">
+        <a-entity id="clicksound" sound="src: #clickWav;poolSize:4"></a-entity>
         <a-entity id="floor_2" button_floor="value: 2" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/3rdfloor.png" position="-0.12935 0.14 0.00149"
                   event-set__click="clicked:true">
-
+          <a-entity class="hightlight" geometry="primitive: circle; radius: 0.03" position="-0.05045 0.00463 -0.0012" material="color: #04a4ac; emissive: #0699c4; emissiveIntensity: 0.5" visible="false"></a-entity>
         </a-entity>
         <a-entity id="floor_1" button_floor="value: 1"  geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/2ndfloor.png" position="-0.12935 0.045 0.00149">
-
+          <a-entity class="hightlight" geometry="primitive: circle; radius: 0.03" position="-0.05045 0.00463 -0.0012" material="color: #04a4ac; emissive: #0699c4; emissiveIntensity: 0.5" visible="false"></a-entity>
         </a-entity>
         <a-entity id="floor_0" button_floor="value: 0" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/Ground.png" position="-0.12935 -0.05 0.00149">
-
+          <a-entity class="hightlight" geometry="primitive: circle; radius: 0.03" position="-0.05045 0.00463 -0.0012" material="color: #04a4ac; emissive: #0699c4; emissiveIntensity: 0.5" visible="false"></a-entity>
         </a-entity>
         <a-entity id="floor_-1" button_floor="value: -1" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/Basement.png" position="-0.12935 -0.145 0.00149">
-
+          <a-entity class="hightlight" geometry="primitive: circle; radius: 0.03" position="-0.05045 0.00463 -0.0012" material="color: #04a4ac; emissive: #0699c4; emissiveIntensity: 0.5" visible="false"></a-entity>
         </a-entity>
       </a-entity>
       <a-plane geometry="height: 2.5; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
