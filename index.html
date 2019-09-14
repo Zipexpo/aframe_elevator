@@ -228,12 +228,16 @@
         </a-entity>
         <a-entity id="floor_1" button_floor="value: 1"  geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/2ndfloor.png" position="-0.12935 0.045 0.00149">
           <a-entity class="hightlight" geometry="primitive: circle; radius: 0.03" position="-0.05045 0.00463 -0.0012" material="color: #04a4ac; emissive: #0699c4; emissiveIntensity: 0.5" visible="false"></a-entity>
+          <a-entity class="description" position = "0.111 0 0"
+                    text="width: 1; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: ${ELEVATOR.currentstate}; anchor: left"
+                    animation__changetext ="property: text.value;loop:true;delay:1000;easing: linear;to: hello"
+
+          ></a-entity>
         </a-entity>
         <a-entity id="floor_0" button_floor="value: 0" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/Ground.png" position="-0.12935 -0.05 0.00149">
           <a-entity class="hightlight" geometry="primitive: circle; radius: 0.03" position="-0.05045 0.00463 -0.0012" material="color: #04a4ac; emissive: #0699c4; emissiveIntensity: 0.5" visible="false"></a-entity>
         </a-entity>
         <a-entity id="floor_-1" button_floor="value: -1" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/Basement.png" position="-0.12935 -0.145 0.00149">
-          <a-entity class="hightlight" geometry="primitive: circle; radius: 0.03" position="-0.05045 0.00463 -0.0012" material="color: #04a4ac; emissive: #0699c4; emissiveIntensity: 0.5" visible="false"></a-entity>
         </a-entity>
       </a-entity>
       <a-plane geometry="height: 2.5; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"

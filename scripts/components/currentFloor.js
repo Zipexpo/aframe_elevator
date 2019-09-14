@@ -17,6 +17,6 @@ AFRAME.registerComponent('current-floor', {
 
     update: function () {
         if(this.data.value%1===0)
-        this.el.setAttribute("text", {value: FLOOR[this.data.value].text});
+            this.el.setAttribute("text", {value: FLOOR[this.data.value].text});
     }
 });
