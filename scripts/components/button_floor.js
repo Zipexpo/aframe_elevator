@@ -15,6 +15,12 @@ AFRAME.registerComponent('button_floor', {
             document.querySelector('#floor_'+self.data.value+' .hightlight').setAttribute('visible',true);
             self.el.emit('chosing-floor');
         });
+        this.v = true;
+        this. descriptonAnimation=setInterval(function(){
+            document.querySelector('#floor_'+self.data.value+' .description')
+                .setAttribute("text", {value: FLOOR[self.data.value][self.v? 'description':'extr']})
+            self.v = !self.v;
+            }, 2000);
 
     },
 

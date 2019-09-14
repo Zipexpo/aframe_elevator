@@ -83,7 +83,11 @@ AFRAME.registerComponent('gamestate', {
                 }
                 ELEVATOR.currentstate.levelArr = ELEVATOR.currentstate.levelArr.sort(function(a,b){return ELEVATOR.currentstate.direction*(a-b)});
                 if ((newState.state==="DOOR_CLOSING"|| newState.state==="STATE_REACH")&& newState.level===ELEVATOR.currentstate.chooseFloor) {
+                    // ELEVATOR.currentstate.levelArr.pop()
+                    ELEVATOR.currentstate.levelArr.shift()
+                    document.querySelector('#floor_'+ ELEVATOR.currentstate.level+' .hightlight').setAttribute('visible',false);
                     newState.state = 'DOOR_OPENING';
+                    self.stateReach(newState,newState.level,true);
                 }else if (ELEVATOR.currentstate.levelArr.length==1){
                     newState.level = ELEVATOR.currentstate.level + ELEVATOR.currentstate.direction/2;
                     newState.state = 'STATE_MOVING';
