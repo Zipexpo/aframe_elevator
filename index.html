@@ -6,7 +6,7 @@
     <meta name="description" content="Hello, World! - A-Frame">
     <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-aabb-collider-component@3.1.0/dist/aframe-aabb-collider-component.min.js"></script>
-    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v2.1.0/dist/aframe-physics-system.min.js"></script>
+    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
     <script src="https://unpkg.com/super-hands@2.0.2/dist/super-hands.min.js"></script>
     <script src="https://unpkg.com/aframe-physics-extras@0.1.2/dist/aframe-physics-extras.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-gif-shader/master/dist/aframe-gif-shader.min.js"></script>
@@ -133,7 +133,7 @@
 
   </script>
   <!--<iframe id="promoweb" style=" position: fixed; left: 0; top: 0; z-index: -1; overflow: hidden" src="https://idatavisualizationlab.github.io"></iframe>-->
-    <a-scene data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals=""
+    <a-scene physics="debug: true" data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals=""
              proxy-event__open="event: closing_door;to: #door; as:close"
              proxy-event__close="event: opening_door;to: #door; as:open"
              proxy-event__moving="event: moving;to: #elevator_o"
@@ -141,7 +141,6 @@
       <a-assets>
         <a-mixin id="controller"
                  physics-collider
-                 static-body="shape: sphere; sphereRadius: 0.02"
                  super-hands="colliderEvent: collisions;
                             colliderEventProperty: els;
                             colliderEndEvent: collisions;
@@ -155,7 +154,10 @@
         <a-mixin id="description" position = "0.111 0 0" scale="0.196 0.196 0.196"
                   text="wrapCount:12; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: hi i; anchor: left"
         ></a-mixin>
-
+        <image id="po1" src="assets/images/figures/idvRact2.gif"></image>
+        <image id="rain" src="assets/images/rain.png"></image>
+        <image id="sunny" src="assets/images/sunny.png"></image>
+        <image id="snow" src="assets/images/snow.png"></image>
         <a-mixin id="cube" dynamic-body grabbable
                  geometry="primitive: box; width: 0.5; height: 0.5; depth: 0.5">
         </a-mixin>
@@ -228,10 +230,17 @@
       <a-entity geometry="primitive: plane; height: 0.75; width: 0.5" scale="" position="1.16689 1.559 -0.98804" material="color: #111111; metalness: 0.74">
         <a-entity id="clicksound" sound="src: #clickWav;poolSize:4"></a-entity>
         <a-entity position="-0.19764 0.34717 0.002">
+          <a-plane id="weatherIcon" geometry="height: 0.1; width: 0.1" position="0.057 -0.089 0"
+                   material="transparent: true; src: #rain;"
+                   event-set__rain="_event:rain; material.src: #rain"
+                   event-set__sunny="_event:sunny; material.src: #sunny"
+                   event-set__snow="_event:snow; material.src: #snow"
+          ></a-plane>
+
           <a-entity scale="1 1 0.196" text="width: 0.6; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: Weather; anchor: left; color: #59dff7"></a-entity>
-          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: 30; anchor: right; color: #59dff7; align: right" position="0.26827 -0.07319"></a-entity>
-          <a-entity scale="1 1 0.196" text="width: 0.5; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: o; anchor: left; color: #59dff7" position="0.27416 -0.06127"></a-entity>
-          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: F; anchor: left; color: #59dff7" position="0.29517 -0.07319"></a-entity>
+          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: 30; anchor: right; color: #59dff7; align: right" position="0.215 -0.07319"></a-entity>
+          <a-entity scale="1 1 0.196" text="width: 0.5; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: o; anchor: left; color: #59dff7" position="0.221 -0.06127"></a-entity>
+          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: F; anchor: left; color: #59dff7" position="0.242 -0.07319"></a-entity>
         </a-entity>
         <a-entity id="floor_2" button_floor="value: 2" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/3rdfloor.png" position="-0.12935 0.14 0.00149"
                   event-set__click="clicked:true">
@@ -251,19 +260,27 @@
           <a-entity class="description" mixin="description"></a-entity>
         </a-entity>
       </a-entity>
-      <a-plane geometry="height: 2.5; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
-                material="shader: gif; src:url(assets/images/figures/idvRact2.gif);"
+      <a-plane geometry="height: 2; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
+                material="shader: gif; src: #po1;"
       ></a-plane>
-      <a-plane position="0 0 -4"  rotation="-90 0" width="5" height="8" color="#7BC8A4" class="collidable" geometry="" material=""></a-plane>
+      <a-plane id="floor" position="0 0 -4"  static-body rotation="-90 0" width="6" height="11" color="#7BC8A4" class="collidable" geometry="" material=""></a-plane>
 
       <a-sky src="assets/sky/sky.jpg"></a-sky>
       <!--<a-entity class="collidable" geometry="primitive: box" position="1 0 0"></a-entity>-->
       <!-- floor entity. 'default' collision group so cubes will bounce off -->
+      <!--restrict-position-->
       <a-entity id="player"
+                body="type: static; mass: 0; shape: none;"
+                shape__main="shape: cylinder;
+                       height: 1.6;
+                       radiusTop: 1;
+                       radiusBottom: 1;"
+                width="1"
+                height="1.6"
+                position="0 1.6 0"
                 camera position="0 1.6 0"
                 wasd-controls
                 look-controls
-                restrict-position
                 shoot="direction: 0 0 -1; spaceKeyEnabled: true">
         <a-cursor ></a-cursor>
         <a-entity id="leftHand" shoot-controls="" weapon="" shoot="" vive-controls="model:false" oculus-touch-controls="model:false" windows-motion-controls="hand:left;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>

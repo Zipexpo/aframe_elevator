@@ -50,3 +50,4 @@ require('./components/button_floor.js');
 // require('./components/gamestate-visuals.js');
 // require('./components/sound-fade.js');
 require('./components/restrict-position.js');
+require('./lib/aframe-speech-command-component.js');
