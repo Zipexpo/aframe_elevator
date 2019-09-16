@@ -133,7 +133,7 @@
 
   </script>
   <!--<iframe id="promoweb" style=" position: fixed; left: 0; top: 0; z-index: -1; overflow: hidden" src="https://idatavisualizationlab.github.io"></iframe>-->
-    <a-scene physics="debug: true" data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals=""
+    <a-scene data-html2canvas-ignore="true" gamestate="level: 0;" gamestate-visuals=""
              proxy-event__open="event: closing_door;to: #door; as:close"
              proxy-event__close="event: opening_door;to: #door; as:open"
              proxy-event__moving="event: moving;to: #elevator_o"
@@ -276,6 +276,7 @@
                 camera position="0 1.6 0"
                 wasd-controls
                 look-controls
+                restrict-position
                 shoot="direction: 0 0 -1; spaceKeyEnabled: true">
         <a-cursor ></a-cursor>
         <a-entity id="leftHand" shoot-controls="" weapon="" shoot="" vive-controls="model:false" oculus-touch-controls="model:false" windows-motion-controls="hand:left;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
