@@ -259,6 +259,13 @@
           <a-entity class="hightlight" mixin="hightlight"></a-entity>
           <a-entity class="description" mixin="description"></a-entity>
         </a-entity>
+        <a-entity id="open_btn" geometry="primitive: plane; height: 0.067; width: 0.067" scale="" material="transparent: true; src: assets/images/door_open.png" position="-0.181 -0.261 0.00149"
+                  event-set__click="event: click;">
+        </a-entity>
+        <a-entity id="close_btn" geometry="primitive: plane; height: 0.067; width: 0.067" scale="" material="transparent: true; src: assets/images/door_close.png" position="-0.020 -0.261 0.00149">
+        </a-entity>
+        <a-entity id="emergency_btn" button_floor="value: -1" geometry="primitive: plane; height: 0.067; width: 0.067" scale="" material="transparent: true; src: assets/images/emergencybtn.png" position="0.163 -0.261 0.00149">
+        </a-entity>
       </a-entity>
       <a-plane geometry="height: 2; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
                 material="shader: gif; src: #po1;"
