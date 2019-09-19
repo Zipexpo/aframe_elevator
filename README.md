@@ -5,7 +5,9 @@
 Basic infomation:
  
 [DEMO](https://zipexpo.github.io/hw1.62.Nguyen/demo.html)
-[DEMO](https://zipexpo.github.io/hw1.62.Nguyen/demo.html)
+[Technology: A-FRAME](https://aframe.io/)
+
+## Content:
 
 * [Old design](#oldElevator)
 * [New Design & brain storm](#design)
