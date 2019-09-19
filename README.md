@@ -10,6 +10,17 @@ Basic infomation:
 
 ## Content:
 
-* [Old design](#oldElevator)
-* [New Design & brain storm](#design)
-* [Application & feature](#application)
+* [Old design](#old-elevator)
+* [New Design & brain storm](#new-design)
+* [Application & feature](#application-and-feature)
+
+### Old Elevator
+Almost all apartment in Ho Chi Minh city in VietName has an elevator like this:
+<img src="/assets/images/figures/hw1.Nguyen_old.gif" align="middle" width="100%">
+
+These elevator quite easy to use exccept the security scan don't give much feed back (when scan wrong) and the place of security scanner quite high (not suitable for the handicap)
+
+### New design
+
+
+### Application and Features
