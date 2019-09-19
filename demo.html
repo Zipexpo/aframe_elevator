@@ -130,6 +130,13 @@
           }
 
       });
+      setInterval(function(){
+          if (timeNow)
+          {
+              document.querySelector('#timeNow')
+                  .setAttribute("text", {value: new Date().toGMTString()})
+          }
+      },1000);
 
   </script>
   <!--<iframe id="promoweb" style=" position: fixed; left: 0; top: 0; z-index: -1; overflow: hidden" src="https://idatavisualizationlab.github.io"></iframe>-->
@@ -230,17 +237,18 @@
       <a-entity geometry="primitive: plane; height: 0.75; width: 0.5" scale="" position="1.16689 1.559 -0.98804" material="color: #111111; metalness: 0.74">
         <a-entity id="clicksound" sound="src: #clickWav;poolSize:4"></a-entity>
         <a-entity position="-0.19764 0.34717 0.002">
-          <a-plane id="weatherIcon" geometry="height: 0.1; width: 0.1" position="0.057 -0.089 0"
+          <a-plane id="weatherIcon" geometry="height: 0.1; width: 0.1" position="0.057 -0.109 0"
                    material="transparent: true; src: #rain;"
                    event-set__rain="_event:rain; material.src: #rain"
                    event-set__sunny="_event:sunny; material.src: #sunny"
                    event-set__snow="_event:snow; material.src: #snow"
           ></a-plane>
 
-          <a-entity scale="1 1 0.196" text="width: 0.6; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: Weather; anchor: left; color: #59dff7"></a-entity>
-          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: 30; anchor: right; color: #59dff7; align: right" position="0.215 -0.07319"></a-entity>
-          <a-entity scale="1 1 0.196" text="width: 0.5; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: o; anchor: left; color: #59dff7" position="0.221 -0.06127"></a-entity>
-          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: F; anchor: left; color: #59dff7" position="0.242 -0.07319"></a-entity>
+          <a-entity position="0 -0.037 0" scale="1 1 0.196" text="width: 0.6; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: Weather; anchor: left; color: #ffffff"></a-entity>
+          <a-entity id ='timeNow' scale="1 1 0.196" text="width: 0.6; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; anchor: left; color: #59dff7"></a-entity>
+          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: 30; anchor: right; color: #59dff7; align: right" position="0.215 -0.11019‬"></a-entity>
+          <a-entity scale="1 1 0.196" text="width: 0.5; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: o; anchor: left; color: #59dff7" position="0.221 -0.09827‬"></a-entity>
+          <a-entity scale="1 1 0.196" text="width: 1.4; font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; value: F; anchor: left; color: #59dff7" position="0.242 -0.11019‬"></a-entity>
         </a-entity>
         <a-entity id="floor_2" button_floor="value: 2" geometry="primitive: plane; height: 0.067; width: 0.159" scale="" material="transparent: true; src: assets/images/3rdfloor.png" position="-0.12935 0.14 0.00149"
                   event-set__click="clicked:true">
