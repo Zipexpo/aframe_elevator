@@ -18,5 +18,12 @@ AFRAME.registerComponent('current-floor', {
     update: function () {
         if(this.data.value%1===0)
             this.el.setAttribute("text", {value: FLOOR[this.data.value].text});
+        else {
+            var displayf = ELEVATOR.currentstate.direction > 0 ? Math.ceil(this.data.value) : Math.floor(this.data.value);
+            displayf = Math.min(Math.max(displayf,-1),2);
+            document.querySelector('#videofloor')
+                .setAttribute("src", '#floor_' + displayf+'Video');
+            document.querySelector('#floor_' + displayf+'Video').play();
+        }
     }
 });
