@@ -30,16 +30,28 @@
                   directiondecorate.emit('hidedirection');
                   // document.getElementById('voicedooropening').components.sound.playSound();
                   document.getElementById('dooropening').components.sound.playSound();
+                  $('#close_btn .dleft')[0].emit('hide');
+                  $('#close_btn .dright')[0].emit('hide');
+                  $('#open_btn .dleft')[0].emit('show');
+                  $('#open_btn .dright')[0].emit('show');
                   el.sceneEl.emit('opening_door');
                   break;
               case 'DOOR_CLOSING':
                   document.getElementById('voicedoorclosing').components.sound.playSound();
                   document.getElementById('doorclosing').components.sound.playSound();
+                  $('#close_btn .dleft')[0].emit('show');
+                  $('#close_btn .dright')[0].emit('show');
+                  $('#open_btn .dleft')[0].emit('hide');
+                  $('#open_btn .dright')[0].emit('hide');
                   el.sceneEl.emit('closing_door');
                   if (ELEVATOR.currentstate.levelArr.length)
                       ELEVATOR.actionNext = 'STATE_MOVING';
                   break;
               case 'STATE_MOVING':
+                  $('#close_btn .dleft')[0].emit('hide');
+                  $('#close_btn .dright')[0].emit('hide');
+                  $('#open_btn .dleft')[0].emit('hide');
+                  $('#open_btn .dright')[0].emit('hide');
                   document.getElementById('elevatormove').components.sound.playSound();
                   el.sceneEl.emit('moving');
                   directiondecorate.emit('showdirection');
@@ -98,6 +110,12 @@
             });
           },
           tick: function() {
+              if (this.justchange&&this.data.value){
+                  $('#close_btn .dleft')[0].emit('hide');
+                  $('#close_btn .dright')[0].emit('hide');
+                  $('#open_btn .dleft')[0].emit('hide');
+                  $('#open_btn .dright')[0].emit('hide');
+              }
               if (this.justchange&&!this.data.value) {
                   this.el.sceneEl.emit('closing_door');
               }else if(this.justchange&&this.data.value&&ELEVATOR.actionNext){
@@ -271,9 +289,34 @@
           <a-entity class="description" mixin="description"></a-entity>
         </a-entity>
         <a-entity id="open_btn" geometry="primitive: plane; height: 0.067; width: 0.067" scale="" material="transparent: true; src: assets/images/door_open.png" position="-0.181 -0.261 0.00149"
-                  event-set__click="event: click;">
+                  event-set__click="event: click;"
+        >
+          <a-entity class='dleft' geometry="primitive: triangle" rotation="0 0 90" scale="0.036 0.024 0.036" position="-0.02 0 0.001" material=""
+                    visibe =false
+                    animation__show ="property: position;dur:1000;startEvents: show;pauseEvents: hide;loop:true;easing: linear;from:-0.02 0 0.001;to: -0.04 0 0.001;"
+                    event-set__show="_event: show; visible: true"
+                    event-set__hide="_event: hide; visible: false"
+          ></a-entity>
+          <a-entity class='dright' geometry="primitive: triangle" rotation="0 0 -90" scale="0.036 0.024 0.036" position="0.02 0 0.001" material=""
+                    visibe =false
+                    animation__open ="property: position;dur:1000;startEvents: show;pauseEvents: hide;loop:true;easing: linear;from:0.02 0 0.001;to: 0.04 0 0.001;"
+                    event-set__show="_event: show; visible: true"
+                    event-set__hide="_event: hide; visible: false"
+          ></a-entity>
         </a-entity>
         <a-entity id="close_btn" geometry="primitive: plane; height: 0.067; width: 0.067" scale="" material="transparent: true; src: assets/images/door_close.png" position="-0.020 -0.261 0.00149">
+          <a-entity class='dleft' geometry="primitive: triangle" rotation="0 0 -90" scale="0.036 0.024 0.036" position="-0.02 0 0.001" material=""
+                    visibe =false
+                    animation__show ="property: position;dur:1000;startEvents: show;pauseEvents: hide;loop:true;easing: linear;to:-0.02 0 0.001;from: -0.04 0 0.001;"
+                    event-set__show="_event: show; visible: true"
+                    event-set__hide="_event: hide; visible: false"
+          ></a-entity>
+          <a-entity class='dright' geometry="primitive: triangle" rotation="0 0 90" scale="0.036 0.024 0.036" position="0.02 0 0.001" material=""
+                    visibe =false
+                    animation__open ="property: position;dur:1000;startEvents: show;pauseEvents: hide;loop:true;easing: linear;to:0.02 0 0.001;from: 0.04 0 0.001;"
+                    event-set__show="_event: show; visible: true"
+                    event-set__hide="_event: hide; visible: false"
+          ></a-entity>
         </a-entity>
         <a-entity id="emergency_btn" button_floor="value: -1" geometry="primitive: plane; height: 0.067; width: 0.067" scale="" material="transparent: true; src: assets/images/emergencybtn.png" position="0.163 -0.261 0.00149">
         </a-entity>
@@ -284,7 +327,9 @@
       <a-entity></a-entity>
       <a-video id ="videofloor" geometry="height: 1.75; width: 1.9" rotation="0 -90" position="1.563 1.754 0.113"
               src ='#floor_0Video'
-      ></a-video>
+      >
+        <a-entity id="displayFloor" text="width: 3;font: assets/fonts/DejaVu-sdf.fnt; fontImage: assets/fonts/DejaVu-sdf.png; align: center; color: #00ffff; value:hello" ></a-entity>
+      </a-video>
       <a-plane id="floor" position="0 0 -4"  static-body rotation="-90 0" width="6" height="11" color="#7BC8A4" class="collidable" geometry="" material=""></a-plane>
 
       <a-sky src="assets/sky/sky.jpg"></a-sky>
