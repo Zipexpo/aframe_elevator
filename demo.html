@@ -180,7 +180,10 @@
         <audio id="emergencyWav" src="assets/sound/emergency.wav"  crossorigin="anonymous"></audio>
         <audio id="idleWav" src="assets/sound/idle.wav"  crossorigin="anonymous"></audio>
         <audio id="clickWav" src="assets/sound/feedback.wav"  crossorigin="anonymous"></audio>
-
+        <video id="floor_1Video" autoplay loop="true" src="assets/video/floor_1.mp4"></video>
+        <video id="floor_2Video" autoplay loop="true" src="assets/video/floor_2.mp4"></video>
+        <video id="floor_0Video" autoplay loop="true" src="assets/video/floor_0.mp4"></video>
+        <video id="floor_-1Video" autoplay loop="true" src="assets/video/floor_-1.mp4"></video>
       </a-assets>
 
       <a-entity id="voice-1" sound="src: #voice-1Wav; positional: false"></a-entity>
@@ -275,9 +278,13 @@
         <a-entity id="emergency_btn" button_floor="value: -1" geometry="primitive: plane; height: 0.067; width: 0.067" scale="" material="transparent: true; src: assets/images/emergencybtn.png" position="0.163 -0.261 0.00149">
         </a-entity>
       </a-entity>
-      <a-plane geometry="height: 2; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
-                material="shader: gif; src: #po1;"
-      ></a-plane>
+      <!--<a-plane geometry="height: 2; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"-->
+                <!--material="shader: gif; src: #po1;"-->
+      <!--&gt;</a-plane>-->
+      <a-entity></a-entity>
+      <a-video geometry="height: 2; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"
+              src ='#floor_0Video'
+      ></a-video>
       <a-plane id="floor" position="0 0 -4"  static-body rotation="-90 0" width="6" height="11" color="#7BC8A4" class="collidable" geometry="" material=""></a-plane>
 
       <a-sky src="assets/sky/sky.jpg"></a-sky>
@@ -293,7 +300,12 @@
                 look-controls
                 restrict-position
                 shoot="direction: 0 0 -1; spaceKeyEnabled: true">
-        <a-cursor ></a-cursor>
+        <!--<a-cursor ></a-cursor>-->
+        <a-entity cursor="fuse: true; fuseTimeout: 500"
+                  position="0 0 -1"
+                  geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                  material="color: #f1d507; shader: flat">
+        </a-entity>
         <a-entity id="leftHand" shoot-controls="" weapon="" shoot="" vive-controls="model:false" oculus-touch-controls="model:false" windows-motion-controls="hand:left;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
         <a-entity id="rightHandPivot">
           <a-entity id="rightHand" shoot-controls="hand:right" weapon="" shoot="" vive-controls="hand:right;model:false" oculus-touch-controls="hand:right;model:false" windows-motion-controls="model:false" daydream-controls="hand:right;model:false" gearvr-controls="hand:right;model:false" obj-model="obj: url(3D/gear_vr_controller.obj); mtl: url(3D/gear_vr_controller.mtl)" sound="on:shoot;poolSize:10;src:assets/sound/Click.wav;volume:0.5"><a-entity light="color:#24CAFF;intensity:0;type:point" position="0 -0.22 -0.14"></a-entity></a-entity>
@@ -306,6 +318,7 @@
                   <!--material="shader: flat; side: back; transparent: true; opacity: 0; depthTest: false; src: #hurtImg">-->
           <!--<a-animation id="player-hit-anim" attribute="material.opacity" to="1" from="0" begin="player-hit" direction="alternate" dur="200" repeat="1"></a-animation>-->
         </a-entity>
+
       </a-entity>
       </a-entity>
 
