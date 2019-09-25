@@ -106,6 +106,23 @@
               });
           }
       });
+      AFRAME.registerComponent('fire_btn', {
+          init: function () {
+              // Use events to figure out what raycaster is listening so we don't have to
+              // hardcode the raycaster.
+              this.el.addEventListener('click', evt => {
+                  document.getElementById('emergency').components.sound.playSound();
+                $('#firePannel')[0].emit('on');
+                $('#firePannel')[0].setAttribute('data-clickable','')
+              document.querySelector('#fireVideo').play();
+
+
+          });
+              this.el.addEventListener('off', evt => {
+                  document.getElementById('emergency').components.sound.pause();
+              });
+          }
+      });
       AFRAME.registerComponent('door-model', {
           schema: {
               value: {default: 0},
@@ -212,6 +229,7 @@
         <video id="floor_0Video" autoplay loop="true" src="assets/video/floor_0.mp4"></video>
         <video id="floor_-1Video" autoplay loop="true" src="assets/video/floor_-1.mp4"></video>
         <video id="scanVideo" autoplay loop="true" src="assets/video/scan.mp4"></video>
+        <video id="fireVideo" autoplay loop="true" src="assets/video/fire.mp4"></video>
       </a-assets>
 
       <a-entity id="voice-1" sound="src: #voice-1Wav; positional: false"></a-entity>
@@ -227,6 +245,10 @@
       <a-entity elevator-model="" id="elevator_o" obj-model="obj: url(3D/elevator.obj); mtl: url(3D/elevator.mtl)" scale="1 1 1" rotation="0 180 0"
                 animation__moving ="property: position;delay:500;dur:4000;startEvents: moving;easing: linear;to: 0 0.001 0"
       >
+        <a-entity id="fire_btn" fire_btn data-clickable="" geometry="primitive: plane; height: 0.5; width: 0.5" scale="" material="transparent: true; src: assets/images/fireIcon.png" position="1.54152 1.80466 0.00149"
+                  event-set__click="clicked:true"
+                  rotation="0 270">
+        </a-entity>
         <a-entity id="door" door-model="value: 1" geometry="depth:  0.1;  height:  2.8;  width:  3.05" position="0 1.518 1.179"
                   material="alphaTest:  0.34; color:  #b2b2b2; metalness:  0.46;"
                   animation__open ="property: position;dur:2000;startEvents: open;easing: linear;to: -2.284 1.518 1.179"
@@ -336,12 +358,23 @@
         >
           <a-video id="access" position="0 0 0.001" geometry="height: 0.3; width: 0.3" src="#scanVideo" material=""></a-video>
         </a-entity>
+        <a-entity id="firePannel" click-one geometry="primitive: plane; height: 0.4; width: 0.48" scale="" material="color: #111111; metalness: 0.74" position="0 0 0.00572"
+                  visible="false"
+                  event-set__click="event: click;visible: false;"
+                  event-set__on="event: on;visible: true;"
+                  proxy-event__click="event: click;to: #fire_btn; as:off"
+        >
+          <a-entity light="color: #ff0000; groundColor: #800000; type: point" position=""
+                    animation="property: position;dur:2000;loop:true;easing: linear;from: 0 0 0; to: 0 2 0"
+          ></a-entity>
+          <a-video id="access" position="0 0 0.001" geometry="height: 0.3; width: 0.3" src="#fireVideo" material=""></a-video>
+        </a-entity>
+
 
       </a-entity>
       <!--<a-plane geometry="height: 2; width: 1.7" rotation="0 -90" position="1.563 1.754 0.113"-->
                 <!--material="shader: gif; src: #po1;"-->
       <!--&gt;</a-plane>-->
-      <a-entity></a-entity>
       <a-video id ="videofloor" geometry="height: 1.75; width: 1.9" rotation="0 -90" position="1.563 1.754 0.113"
               src ='#floor_0Video'
       >
@@ -382,8 +415,6 @@
           <!--<a-animation id="player-hit-anim" attribute="material.opacity" to="1" from="0" begin="player-hit" direction="alternate" dur="200" repeat="1"></a-animation>-->
         </a-entity>
 
-      </a-entity>
-      </a-entity>
 
       <a-entity light="type: ambient; color: #BBB"></a-entity>
       <a-entity light="type: spot; angle: 85.55; intensity: 0.57; distance: 5.65" rotation="-90 0" position="0 3.141 0"></a-entity>
