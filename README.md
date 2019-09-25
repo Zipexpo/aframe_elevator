@@ -1,9 +1,9 @@
 # A-ELEVATOR: Design and Build elevator using Aframe 
 
-<a href="https://zipexpo.github.io/hw1.62.Nguyen/demo.html"><img src="https://media.giphy.com/media/W4XAOhc0nHdtrOhHZQ/giphy.gif" align="left" width="100%"></a>
+<a href="https://www.youtube.com/embed/q7zVC32jW2c"><img src="https://media.giphy.com/media/W4XAOhc0nHdtrOhHZQ/giphy.gif" align="left" width="100%"></a>
 
 
- 
+
 * [DEMO](https://zipexpo.github.io/hw1.62.Nguyen/demo.html)
 * [Technology: A-FRAME](https://aframe.io/)
 
@@ -35,3 +35,4 @@ Additionally, I relocate the box B in old design lower
 ### Application and Features
 [**VR** or Virtual reality is helpfull in architecture when we want to see the instance 3D in the environment and experience by your self before making it to the reality. Therefore, I chose to implement the elevator in web VR with [**a-frame**](https://aframe.io/) and [**javascript**](https://www.javascript.com/)
 
+<iframe src="./demo.html"></iframe>
