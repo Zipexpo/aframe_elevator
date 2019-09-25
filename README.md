@@ -34,5 +34,8 @@ Additionally, I relocate the box B in old design lower
 
 ### Application and Features
 [**VR** or Virtual reality is helpfull in architecture when we want to see the instance 3D in the environment and experience by your self before making it to the reality. Therefore, I chose to implement the elevator in web VR with [**a-frame**](https://aframe.io/) and [**javascript**](https://www.javascript.com/)
-
+Touch scrren needed  is about 14 inch (to cover all panel function.
+User feedback: sound, light
+Extra information: weather, time, floor information (general description and map)
+Extra design: fire panel in case of fire.
 <iframe src="./demo.html"></iframe>
