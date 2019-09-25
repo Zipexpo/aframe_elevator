@@ -38,4 +38,4 @@ Touch scrren needed  is about 14 inch (to cover all panel function.
 User feedback: sound, light
 Extra information: weather, time, floor information (general description and map)
 Extra design: fire panel in case of fire.
-<iframe src="./demo.html"></iframe>
+<iframe width="100%" height="100%" src="./demo.html"></iframe>
