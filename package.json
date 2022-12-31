@@ -26,7 +26,7 @@
     "cross-env": "^3.0.0",
     "semistandard": "^9.0.0",
     "snazzy": "^4.0.1",
-    "webpack": "^1.13.2",
+    "webpack": "^5.75.0",
     "webpack-dev-server": "^1.16.1",
     "aframe-room-component": "^0.3.0"
   }
